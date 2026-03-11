@@ -66,6 +66,10 @@ function App() {
   const handleDragMove = useCallback(
     (event: DragMoveEvent) => {
       const data = event.active.data.current;
+      // Close mobile sidebar when library image is dragged into the working area
+      if (data?.type === 'library-image' && event.over?.data.current?.type === 'working-area') {
+        setMobileSidebarOpen(false);
+      }
       if (data?.type !== 'working-image') {
         setSidebarInsertIndex(null);
         return;
@@ -79,7 +83,7 @@ function App() {
         setSidebarInsertIndex(null);
       }
     },
-    [setSidebarInsertIndex, computeSidebarInsertIndex],
+    [setSidebarInsertIndex, computeSidebarInsertIndex, setMobileSidebarOpen],
   );
 
   const handleDragEnd = useCallback(

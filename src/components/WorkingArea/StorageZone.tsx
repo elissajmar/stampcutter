@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { StampToolState } from '../../types';
 import physicalCutterSvg from '../../assets/PhysicalCutter.svg';
 import cutterReturnSvg from '../../assets/CutterReturn.svg';
+import { useAppStore } from '../../store/useAppStore';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -36,6 +37,7 @@ interface Props {
 
 export function StorageZone({ stampToolState, onPickUp, onStore }: Props) {
   const isMobile = useIsMobile();
+  const setMousePosition = useAppStore((s) => s.setMousePosition);
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (stampToolState === 'STORED') {
@@ -49,6 +51,12 @@ export function StorageZone({ stampToolState, onPickUp, onStore }: Props) {
     return (
       <div
         onClick={handleClick}
+        onPointerDown={(e) => {
+          if (!isMobile) return;
+          e.preventDefault();
+          setMousePosition({ x: e.clientX, y: e.clientY });
+          onPickUp();
+        }}
         className="absolute cursor-pointer z-30 hover:scale-105 transition-transform"
         style={isMobile ? {
           bottom: RETURN_ZONE_BOTTOM + (RETURN_ZONE_H - STORED_H) / 2,

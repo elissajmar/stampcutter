@@ -27,11 +27,20 @@ export function useStampCutter() {
   useEffect(() => {
     if (stampToolState !== 'PICKED_UP') return;
 
-    const handler = (e: MouseEvent) => {
+    const mouseHandler = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
-    window.addEventListener('mousemove', handler);
-    return () => window.removeEventListener('mousemove', handler);
+    const touchHandler = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        setMousePosition({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+      }
+    };
+    window.addEventListener('mousemove', mouseHandler);
+    window.addEventListener('touchmove', touchHandler, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', mouseHandler);
+      window.removeEventListener('touchmove', touchHandler);
+    };
   }, [stampToolState, setMousePosition]);
 
   const pickUp = useCallback(() => {
