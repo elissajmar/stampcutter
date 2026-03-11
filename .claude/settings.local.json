@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npx:*)",
+      "Bash(NODE_OPTIONS=\"\" npx -y create-vite@6:*)",
+      "Bash(NODE_OPTIONS=\"\" npx:*)",
+      "Bash(NODE_OPTIONS=\"\" npx tsc:*)",
+      "Bash(NODE_OPTIONS=\"\" npx vite build:*)",
+      "Bash(NODE_OPTIONS=\"\" npm run dev:*)",
+      "Bash(python3:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git init:*)"
+    ]
+  }
+}
