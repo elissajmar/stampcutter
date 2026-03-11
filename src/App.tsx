@@ -34,6 +34,7 @@ function App() {
   } = useAppStore();
 
   const [activeItem, setActiveItem] = useState<Active | null>(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -195,8 +196,8 @@ function App() {
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full">
-        <Sidebar />
-        <WorkingArea />
+        <Sidebar isOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
+        <WorkingArea onOpenSidebar={() => setMobileSidebarOpen(true)} />
       </div>
       <DragOverlayRenderer active={activeItem} />
     </DndContext>

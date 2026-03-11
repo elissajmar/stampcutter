@@ -3,6 +3,16 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import type { WorkingAreaImage } from '../../types';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 const MIN_SIZE = 160;
 const MAX_SIZE = 1200;
 
@@ -55,6 +65,9 @@ export function WorkingImage({ image }: Props) {
     data: { type: 'working-image', image },
   });
   const updateWorkingImage = useAppStore((s) => s.updateWorkingImage);
+  const selectedWorkingImageId = useAppStore((s) => s.selectedWorkingImageId);
+  const setSelectedWorkingImageId = useAppStore((s) => s.setSelectedWorkingImageId);
+  const isMobile = useIsMobile();
   const [url, setUrl] = useState<string | null>(null);
   const [hovered, setHovered] = useState(false);
   const [resizing, setResizing] = useState(false);
@@ -165,8 +178,9 @@ export function WorkingImage({ image }: Props) {
 
   if (!url) return null;
 
+  const isSelected = isMobile && selectedWorkingImageId === image.id;
   const active = isDragging || resizing;
-  const showHandles = (hovered || resizing) && !isDragging;
+  const showHandles = (hovered || resizing || isSelected) && !isDragging;
 
   return (
     <div
@@ -184,6 +198,12 @@ export function WorkingImage({ image }: Props) {
       onPointerLeave={() => {
         if (!resizingRef.current) setHovered(false);
       }}
+      onClick={(e) => {
+        if (isMobile) {
+          e.stopPropagation();
+          setSelectedWorkingImageId(image.id);
+        }
+      }}
     >
       <img
         src={url}
@@ -198,7 +218,7 @@ export function WorkingImage({ image }: Props) {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          outline: active
+          outline: active || isSelected
             ? '2px solid #facc15'
             : hovered
               ? '2px solid rgba(250, 204, 21, 0.5)'

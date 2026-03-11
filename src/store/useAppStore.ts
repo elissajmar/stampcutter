@@ -49,6 +49,10 @@ interface AppState {
   stampValid: boolean;
   setStampValid: (valid: boolean) => void;
 
+  // Mobile image selection
+  selectedWorkingImageId: string | null;
+  setSelectedWorkingImageId: (id: string | null) => void;
+
   // Hydration
   hydrate: () => Promise<void>;
 }
@@ -177,6 +181,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   stampValid: true,
   setStampValid: (valid) => set({ stampValid: valid }),
+
+  selectedWorkingImageId: null,
+  setSelectedWorkingImageId: (id) => set({ selectedWorkingImageId: id }),
 
   hydrate: async () => {
     const [libImages, workImages, stamps] = await Promise.all([

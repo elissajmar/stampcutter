@@ -1,6 +1,17 @@
+import { useState, useEffect } from 'react';
 import type { StampToolState } from '../../types';
 import physicalCutterSvg from '../../assets/PhysicalCutter.svg';
 import cutterReturnSvg from '../../assets/CutterReturn.svg';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
 
 const SVG_W = 338;
 const SVG_H = 619;
@@ -24,6 +35,7 @@ interface Props {
 }
 
 export function StorageZone({ stampToolState, onPickUp, onStore }: Props) {
+  const isMobile = useIsMobile();
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (stampToolState === 'STORED') {
@@ -38,7 +50,13 @@ export function StorageZone({ stampToolState, onPickUp, onStore }: Props) {
       <div
         onClick={handleClick}
         className="absolute cursor-pointer z-30 hover:scale-105 transition-transform"
-        style={{
+        style={isMobile ? {
+          bottom: RETURN_ZONE_BOTTOM + (RETURN_ZONE_H - STORED_H) / 2,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: STORED_W,
+          height: STORED_H,
+        } : {
           bottom: RETURN_ZONE_BOTTOM + (RETURN_ZONE_H - STORED_H) / 2,
           right: RETURN_ZONE_RIGHT + (RETURN_ZONE_W - STORED_W) / 2,
           width: STORED_W,
@@ -64,7 +82,7 @@ export function StorageZone({ stampToolState, onPickUp, onStore }: Props) {
     return (
       <div
         onClick={handleClick}
-        className="absolute bottom-8 right-6 z-30 flex items-center justify-center"
+        className={`absolute z-30 flex items-center justify-center ${isMobile ? 'bottom-4 left-1/2 -translate-x-1/2' : 'bottom-8 right-6'}`}
         style={{
           width: returnW,
           height: returnH,
